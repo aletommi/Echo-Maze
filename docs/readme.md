@@ -11,15 +11,26 @@ Echo Maze è un gioco 2D cooperativo basato sull'ecolocalizzazione. Due pipistre
 
 ## 🧩 Meccaniche di gioco
 - **Ping semplice**: onda bianca che si propaga, rimbalza e svanisce.
-- **Ping potenziato**: se i due pipistrelli pingano insieme, l'eco è più intensa e duratura.
+- **Ping potenziato**: se i due pipistrelli pingano insieme, l'eco è più intensa e duratura (attivato dalla collisione fisica delle onde).
 - **Visione limitata**: i giocatori vedono solo una piccola area attorno a loro.
 - **Materiali acustici diversi**: ogni parete reagisce al suono in modo unico (basalto, cristalli, metallo, sabbia, ecc.).
+- **Mostri Sonori**: varie creature (come il Listener, Stalker e Screamer) reagiscono al rumore, rendendo necessaria una gestione strategica del ping.
+- **Trappole Acustiche**: ostacoli (mine, campanelli, barriere) che si attivano o reagiscono al suono del ping, aggiungendo rischio e complessità ai puzzle.
 
 ## 📦 Struttura del progetto
-Il progetto è suddiviso in vari file di documentazione:
-- **README.md** – introduzione generale e panoramica del progetto.
-- **GAMEPLAY.md** – descrizione dettagliata delle meccaniche di gioco.
-- **LEVELS.md** – progettazione, struttura e caratteristiche dei livelli.
+Il progetto è suddiviso in vari file di documentazione per mantenere la logica e il design ben separati:
+
+* **readme.md** – Introduzione generale, panoramica del progetto e stack tecnologico.
+* **roadmap.md** – Definisce le 8 fasi di implementazione e la strategia di sviluppo.
+* **gameplay.md** – Descrizione dettagliata delle meccaniche di gioco, comandi e progressione della difficoltà.
+* **ping.md** – Dettaglio tecnico del funzionamento del ping direzionale (40°) e della logica di collisione cooperativa.
+* **mosnters.md** – Definisce il comportamento e le IA dei mostri (Listener, Stalker, Screamer).
+* **traps.md** – Dettaglia l'attivazione e gli effetti delle trappole acustiche (Mine, Campanelli, Barriere).
+* **rooms.md** – Definisce i *template* delle stanze (Normali, Corridoi, Tematiche) e le loro versioni (Light, Hard, Extreme).
+* **mapGeneration.md** – Descrive l'algoritmo di generazione procedurale lato server, la segmentazione e l'assegnazione dei materiali.
+* **levels.md** – Definisce la progressione dei 5 livelli, i parametri configurabili e gli obiettivi specifici.
+* **lobby.md** – Dettaglia il design dell'interfaccia, la creazione della partita, la gestione del codice e il sistema di "Pronto".
+* **designPatter.md** – Definisce i pattern architetturali obbligatori (State, Observer, Factory) per lo sviluppo professionale del gioco.
 
 
 ## 🖥️ Tecnologia utilizzata
