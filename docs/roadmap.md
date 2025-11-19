@@ -1,152 +1,128 @@
-# Roadmap di Sviluppo — Echo Maze (Versione Phaser.js + Lobby Multiplayer)
+# 🗺️ Roadmap di Sviluppo — Echo Maze (8 Fasi)
+
+Questa roadmap guida lo sviluppo del gioco step-by-step, strutturando la sequenza di implementazione in 8 fasi modulari.
+
+**Stack Tecnologico:**
+* **Frontend:** React (UI/Menu) + Phaser.js (Game Canvas).
+* **Backend:** Next.js (API/Auth) + Node.js Custom Server (WebSocket/Game Loop).
+* **Comunicazione:** Socket.io (per la gestione stanze e sync in tempo reale).
 
 ---
 
-# 🧱 FASE 1 — Setup del Progetto
-## 1.1 Struttura del repository
-- Cartella **client/**
-- Cartella **server/**
-- Cartella **shared/**
-- Cartella **docs/** → file .md
+# 🧱 FASE 1 — Infrastruttura & Lobby System
+**Obiettivo:** Creare la connessione tra due giocatori e l'interfaccia pre-partita.
 
-## 1.2 Configurazione Phaser.js
-- Setup scena principale
-- Configurazione Canvas
-- Setup fisica Arcade
-- Gestione camera multipla
+### 1.1 Setup Ambiente
+* Configurare l'architettura per ospitare React/Phaser (Client) e Node.js/Socket.io (Server).
+* Installare e configurare Phaser.js all'interno del client React.
 
-## 1.3 Setup server
-- Avvio server Node.js
-- Integrazione WebSocket (ws o socket.io)
-- Gestione connessioni giocatori
+### 1.2 Logica di Lobby
+* Implementare logica `createRoom` / `joinRoom` con generazione di codice alfanumerico a 8 caratteri.
+* Gestire la connessione e disconnessione di massimo 2 giocatori.
+
+### 1.3 Interfaccia Lobby (React)
+* Creare interfaccia in stile **scuro e minimale**.
+* Implementare il sistema di **Stato "Pronto" / "Non Pronto"**.
+* Implementare il pulsante **"Avvia Partita"** (visibile solo all'Host quando entrambi sono pronti).
 
 ---
 
-# 🧩 FASE 2 — Sistema Lobby & Matchmaking
-## 2.1 Schermata iniziale
-- Pulsante **Crea partita**
-- Pulsante **Entra nella partita**
+# 🗺️ FASE 2 — Generazione Mappa Procedurale
+**Obiettivo:** Il server genera il labirinto e il client lo disegna.
 
-## 2.2 Creazione della partita
-- Generazione codice partita alfanumerico (es. 8 caratteri)
-- Registrazione stanza nel backend
-- Attesa secondo giocatore
+### 2.1 Algoritmo Server-Side
+* Implementare algoritmo di generazione (DFS o Prim).
+* **Materiali Acustici:** Assegnare materiali (Metallo, Sabbia, Cristallo) ai tile in base ai parametri del livello.
 
-## 2.3 Unione alla partita
-- Inserimento codice
-- Validazione stanza
-- Sync stato partita
-
-## 2.4 Avvio del gioco
-- Transizione alla scena Phaser principale quando entrambi sono pronti
+### 2.2 Rendering Client (Phaser)
+* Ricevere il JSON della mappa dal server.
+* Implementare il rendering del `Tilemap` in Phaser per disegnare muri e pavimenti.
+* Assegnare proprietà di collisione ai muri (Arcade Physics).
 
 ---
 
-# 🎮 FASE 3 — Movimento e Telecamere
-## 3.1 Movimento pipistrelli
-- Input WASD / Frecce
-- Velocità costante
-- Collisioni automatiche tramite Arcade Physics
+# 🦇 FASE 3 — Personaggi & Sincronizzazione
+**Obiettivo:** I giocatori si muovono nel labirinto e si vedono a vicenda.
 
-## 3.2 Telecamere indipendenti
-Ogni giocatore:
-- vede solo la propria telecamera
-- segue il proprio pipistrello
-- mantiene un piccolo cerchio di luce attorno a sé
+### 3.1 Movimento Locale
+* Implementare input WASD / Frecce.
+* Implementare la collisione del pipistrello con i muri del `Tilemap`.
+* Implementare l'**aura di luce** attorno al pipistrello (visione base).
 
-## 3.3 Sincronizzazione multiplayer
-- invio posizione giocatore → server → altro client
-- gestione lag e smoothing
+### 3.2 Sincronizzazione Multiplayer
+* **Server Authority:** Il server riceve e trasmette gli aggiornamenti di posizione (x, y).
+* **Client Prediction/Interpolation:** Implementare tecniche per rendere fluido il movimento del compagno.
 
 ---
 
-# 🔊 FASE 4 — Sistema di Ping Sonoro (Phaser)
+# 🔊 FASE 4 — Il Sistema di Ping (Core Mechanic)
+**Obiettivo:** Implementare l'ecolocalizzazione e la meccanica cooperativa principale.
+*(Riferimento: `ping.md`)*
 
-- **Vedere file ping.md per i dettagli.**
+### 4.1 Ping Base (Raycasting)
+* Implementare la logica del **cono di 40 gradi** direzionale.
+* Eseguire Raycasting per rilevare l'impatto sui muri.
+* **Effetto Visivo:** Illuminare il tile colpito + **5 tile adiacenti** ("splash").
+* Implementare logica di **rimbalzo** (angolo di riflessione) con degrado dell'intensità.
 
----
-
-# 🗺️ FASE 5 - Tipologie di Stanze
-
-- **Vedere mapGeneration.md (FASE 4) per i dettagli.**
-
-# 🗺️ FASE 6 — Generazione Procedurale (Server-side)
-## 6.1 Generazione labirinto
-- algoritmo (DFS, Prim, Eller)
-- generazione server → invio mappa ai client
-
-## 6.2 Materiali acustici
-- associazione materiale a ogni cella
-
-## 6.3 Zones mute & camere
-- aggiunta aree di assorbimento
-- camere grandi per eco multiplo
+### 4.2 Ping Potenziato (Co-op)
+* **Attivazione:** Rilevare la **collisione fisica** tra i due coni di 40 gradi dei giocatori.
+* **Effetto:** Generare una **"Super-Eco"** circolare con raggio e intensità maggiori.
 
 ---
 
-# 👾 FASE 7 — Mostri e Trappole
+# 👾 FASE 5 — Mostri & Intelligenza Artificiale
+**Obiettivo:** Introdurre i pericoli che reagiscono al suono.
+*(Riferimento: `monster.md`)*
 
-- **Vedere file monster.md e traps.md per i dettagli.**
-- Implementazione IA e sincronizzazione stato lato server.
-- Rendering visivo (visibili solo se colpiti dal ping).
+### 5.1 Implementazione AI (Server)
+* Definire lo stato dei mostri sul server (posizione, stato Alert/Idle).
+* Implementare le regole di visibilità: i mostri sono visibili solo se colpiti dal ping.
 
----
-
-# 🧩 FASE 8 — Puzzle Sonori
-
-- **Vedere gameplay.md (Sezione 11) e levels.md (Livello 5) per i dettagli.**
-- Implementazione delle meccaniche di attivazione (Porte Acustiche, ecc.).
-
-# 🏞️ FASE 9 — Creazione dei 5 Livelli
-
-- **Vedere file levels.md per la progressione e i dettagli.**
-- Configurazione dei parametri variabili per ogni livello (dimensioni, materiali, mostri, trappole).
----
-
-# 🖥️ FASE 10 — Backend Avanzato
-## 10.1 Sistema utenti
-- registrazione
-- login
-- salvataggio statistiche
-
-## 10.2 Leaderboard
-- tempo completamento
-- morti
-- tentativi
-
-## 10.3 Gestione partite
-- cleanup stanze
-- gestione disconnessioni
+### 5.2 Comportamento Mostri
+* **Listener (Cieco):** Implementare logica di Pathfinding verso l'origine del ping.
+* **Stalker:** Implementare la logica "non osservato" (segue i giocatori se non visti dalla loro aura di luce).
+* **Screamer (Veggente):** Implementare l'urlo come funzione che illumina la mappa (globale) e allerta gli altri mostri.
 
 ---
 
-# 🎨 FASE 11 — Effetti Grafici & Audio
-## 11.1 Effetti grafici Phaser
-- shader per eco
-- dissolvenza muri
-- risonanza potenziata
+# 💣 FASE 6 — Trappole & Elementi Interattivi
+**Obiettivo:** Implementare gli ostacoli statici e i puzzle.
+*(Riferimento: `traps.md`)*
 
-## 11.2 Effetti audio
-- ping
-- rimbalzi
-- ambiente caverna
+### 6.1 Sistema Trigger
+* **Mine Sonore:** Implementare il trigger di esplosione al contatto con l'onda del ping.
+* **Campanelli:** Trigger sonoro che attira i mostri circostanti.
 
----
-
-# 🚀 FASE 12 — Polishing & Ottimizzazioni
-## 12.1 Bilanciamento
-- difficoltà mostri
-- durata ping
-- densità trappole
-
-## 12.2 Performance
-- batching grafico
-- ottimizzazione onde
-- riduzione traffico WebSocket
-
-## 12.3 QA & bugfix
+### 6.2 Elementi Puzzle
+* **Barriere Acustiche:** Implementare il cambio di stato (aperto/chiuso) in base al tipo di ping (singolo vs. potenziato).
+* **Zone Anti-Eco:** Definire queste aree in modo che il ping venga annullato istantaneamente al contatto.
 
 ---
 
-# 🎯 Conclusione
-Questa roadmap aggiornata definisce un percorso chiaro per sviluppare Echo Maze usando **Phaser.js**, con multiplayer cooperativo, lobby con codice partita e telecamere indipendenti per ciascun giocatore. Ogni fase è modulare e può essere implementata in ordine, mantenendo l'MVP chiaro e scalabile.
+# 🏆 FASE 7 — Loop di Gioco e Livelli
+**Obiettivo:** Creare un flusso di gioco completo e tracciare le performance.
+*(Riferimento: `levels.md`)*
+
+### 7.1 Gestione Partita
+* Implementare un **Timer Ufficiale** (lato server).
+* Implementare la logica per la transizione tra i **5 Livelli**.
+* Definire le condizioni di vittoria (raggiungimento dell'uscita) e sconfitta (Game Over).
+
+### 7.2 Backend & Leaderboard
+* Implementare il salvataggio delle statistiche post-partita (tempo totale, ping usati, trappole attivate).
+* Configurare il database PostgreSQL per la **Leaderboard** (Next.js API).
+
+---
+
+# 🎨 FASE 8 — Polish Audio & Visivo
+**Obiettivo:** Ottimizzare l'esperienza utente e l'atmosfera.
+
+### 8.1 Effetti Grafici
+* Implementare shader in Phaser per l'effetto di **dissolvenza**.
+* Creare l'effetto visivo del **bagliore neon** (verde) per lo stato di "Pronto".
+* Ottimizzare il rendering del Tilemap per migliorare le performance.
+
+### 8.2 Design Sonoro
+* Implementare suoni per il ping, i rimbalzi e le trappole.
+* Aggiungere audio d'ambiente per aumentare la tensione e l'immersività.
